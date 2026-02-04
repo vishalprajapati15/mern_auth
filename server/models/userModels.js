@@ -1,40 +1,40 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: true
     },
-    email:{
+    email: {
         type: String,
         required: true,
         unique: true
     },
-    password:{
+    password: {
         type: String,
         required: true
     },
-    verifyOtp:{
-        type: String,
-        default:''
-    },
-    verifyOtpExpireAt:{
-        type: Number,
-        default: 0
-    },
-    isAccountVerified:{
-        type: Boolean,
-        default: false
-    },
-    resetOtp:{
+    verifyOtp: {
         type: String,
         default: ''
     },
-    resetOtpExpireAt:{
+    verifyOtpExpireAt: {
         type: Number,
         default: 0
     },
-}, {timestamps:true});
+    isAccountVerified: {
+        type: Boolean,
+        default: false
+    },
+    resetOtp: {
+        type: String,
+        default: ''
+    },
+    resetOtpExpireAt: {
+        type: Number,
+        default: 0
+    },
+}, { timestamps: true });
 
 const userModel = mongoose.models.user || mongoose.model('user', userSchema);
 

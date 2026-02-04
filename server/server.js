@@ -12,12 +12,12 @@ connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({credentials: true}));
+app.use(cors({ credentials: true }));
 
 connectDB();
 
-app.get('/', (req, res)=> res.send('API is running...'));   
+app.get('/', (req, res) => res.send('API is running...'));
 app.use('/api/auth', authRouter);
 
-app.listen(port, ()=> console.log(`Server is running on port : ${port}`));
+app.listen(port, () => console.log(`Server is running on port : ${port}`));
 
