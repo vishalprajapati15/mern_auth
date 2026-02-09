@@ -169,7 +169,7 @@ export const verifyEmail = async (req, res) => {
         user.verifyOtpExpireAt = 0;
         await user.save();
 
-        return res.json({ success: true, message:'Email verified successfully!!'});
+        return res.json({ success: true, message: 'Email verified successfully!!' });
 
     } catch (error) {
         res.json({ success: false, message: `verify OTP Error: ${error.message}` });
@@ -178,7 +178,7 @@ export const verifyEmail = async (req, res) => {
 
 // this controller assumes that a userAuth middleware has already
 // validated the token and, if valid, allowed the request to reach here
-export const isAuthenticated = async (req, res)=>{
+export const isAuthenticated = async (req, res) => {
     return res.json({
         success: true,
         message: 'User is authenticated!!',
@@ -186,16 +186,16 @@ export const isAuthenticated = async (req, res)=>{
 }
 
 //send password reset OTP
-export const sendResetOtp = async (req, res)=>{
-    const {email} = req.body;
-    if(!email){
-        return res.json({success: false, message: 'Email is required!!'});
+export const sendResetOtp = async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.json({ success: false, message: 'Email is required!!' });
     }
 
     try {
-        const user = await userModel.findOne({email});
-        if(!user){
-            return res.json({success: false, message: 'User not found'});
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' });
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000));
@@ -222,25 +222,25 @@ export const sendResetOtp = async (req, res)=>{
 }
 
 //Reset Password 
-export const resetPassword = async (req, res)=>{
-    const {email, otp, newPassword} = req.body;
-    if(!email || !otp || !newPassword){
-        return res.json({success:false, message:'Email, OTP and NewPassword required!!'});
+export const resetPassword = async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+        return res.json({ success: false, message: 'Email, OTP and NewPassword required!!' });
     }
 
     try {
-        const user = await userModel.findOne({email});
-    
-        if(!user){
-            return res.json({success: false, message:'User not found!!'});
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.json({ success: false, message: 'User not found!!' });
         }
 
-        if(user.resetOtp === "" || user.resetOtp !== otp){
-            return res.json({success: false, message:'Invalid OTP'});
+        if (user.resetOtp === "" || user.resetOtp !== otp) {
+            return res.json({ success: false, message: 'Invalid OTP' });
         }
 
-        if(user.resetOtpExpireAt < Date.now()){
-            return res.json({success: false, message:'OTP is Expired'});
+        if (user.resetOtpExpireAt < Date.now()) {
+            return res.json({ success: false, message: 'OTP is Expired' });
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -251,7 +251,7 @@ export const resetPassword = async (req, res)=>{
 
         await user.save();
 
-        return res.json({success: true, message: 'Password has been reset successfully!!'});
+        return res.json({ success: true, message: 'Password has been reset successfully!!' });
 
     } catch (error) {
         res.json({ success: false, message: ` Reset password Error: ${error.message}` });
