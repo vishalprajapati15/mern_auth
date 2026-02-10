@@ -10,36 +10,25 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 connectDB();
-// const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
-// .split(',')
-// .map((origin)=>origin.trim())
-// .filter(Boolean);
+
 app.use(express.json());
 app.use(cookieParser());
-// app.use(
-//     cors({
-//         origin: (origin, callback) => {
-//             const allowedOrigins = [
-//                 'http://localhost:5173',
-//                 'https://mern-auth-jet-xi.vercel.app'
-//             ];
-//             if (!origin || allowedOrigins.includes(origin)) {
-//                 callback(null, true);
-//             }
-//             else{
-//                 console.warn('Blocked by CORS : ', origin);
-//                 callback(null, false);
-//             }
-//             // return callback(new Error('Not Allowed by Cors!!'));
-//         },
-//         credentials: true,
-//     })
-// );
-
 app.use(
     cors({
-        origin: true,
-        credentials: true
+        origin: (origin, callback) => {
+            const allowedOrigins = [
+                'http://localhost:5173',
+                'https://mern-auth-jet-xi.vercel.app'
+            ];
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            }
+            else{
+                console.warn('Blocked by CORS : ', origin);
+                callback(new Error('Not Allowed by CORS'));
+            }
+        },
+        credentials: true,
     })
 );
 
