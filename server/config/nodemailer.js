@@ -1,24 +1,25 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 465,
-    secure: true, // use SSL
+    service: 'gmail',
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.APP_PASS,
     },
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 20000,
+    // Add pool and rate limiting for production
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    rateDelta: 1000,
+    rateLimit: 5,
 });
 
-transporter.verify((err)=>{
-    if(err){
-        console.log('SMTP Verify Error: ', err.message);
-    }
-    else{
-        console.log('SMTP READY');
+// Verify connection on startup
+transporter.verify((err) => {
+    if (err) {
+        console.error('SMTP Connection Error:', err.message);
+    } else {
+        console.log('✓ Gmail SMTP ready to send emails');
     }
 });
 
