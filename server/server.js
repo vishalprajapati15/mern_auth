@@ -18,13 +18,27 @@ app.use(
         origin: (origin, callback) => {
             const allowedOrigins = [
                 'http://localhost:5173',
-                'https://mern-auth-jet-xi.vercel.app'
+                'https://mern-auth-jet-xi.vercel.app',
+                'https://mern-auth-fyk9gzdic-vishal-prajapatis-projects-0c602765.vercel.app'
             ];
-            if (!origin || allowedOrigins.includes(origin)) {
+            
+            console.log('Request Origin:', origin);
+            
+            // Allow requests with no origin (like mobile apps or curl)
+            if (!origin) {
+                return callback(null, true);
+            }
+            
+            // Allow any vercel.app domain
+            if (origin.endsWith('.vercel.app')) {
+                return callback(null, true);
+            }
+            
+            if (allowedOrigins.includes(origin)) {
                 callback(null, true);
             }
             else{
-                console.warn('Blocked by CORS : ', origin);
+                console.warn('Blocked by CORS:', origin);
                 callback(new Error('Not Allowed by CORS'));
             }
         },
