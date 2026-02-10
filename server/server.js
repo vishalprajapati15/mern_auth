@@ -16,23 +16,30 @@ connectDB();
 // .filter(Boolean);
 app.use(express.json());
 app.use(cookieParser());
+// app.use(
+//     cors({
+//         origin: (origin, callback) => {
+//             const allowedOrigins = [
+//                 'http://localhost:5173',
+//                 'https://mern-auth-jet-xi.vercel.app'
+//             ];
+//             if (!origin || allowedOrigins.includes(origin)) {
+//                 callback(null, true);
+//             }
+//             else{
+//                 console.warn('Blocked by CORS : ', origin);
+//                 callback(null, false);
+//             }
+//             // return callback(new Error('Not Allowed by Cors!!'));
+//         },
+//         credentials: true,
+//     })
+// );
+
 app.use(
     cors({
-        origin: (origin, callback) => {
-            const allowedOrigins = [
-                'http://localhost:5173',
-                'https://mern-auth-jet-xi.vercel.app',
-            ];
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true);
-            }
-            else{
-                console.warn('Blocked by CORS : ', origin);
-                callback(null, false);
-            }
-            // return callback(new Error('Not Allowed by Cors!!'));
-        },
-        credentials: true,
+        origin: true,
+        credentials: true
     })
 );
 
