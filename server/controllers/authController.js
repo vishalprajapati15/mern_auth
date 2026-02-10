@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModels.js';
 import transporter from '../config/nodemailer.js';
-
+import { PASSWORD_RESET_TEMPLATE, EMAIL_VERIFY_TEMPLAET } from '../config/emailTemplets.js';
 
 
 
@@ -113,22 +113,14 @@ export const logout = async (req, res) => {
 export const sendverifyOtp = async (req, res) => {
     try {
         const userId  = req.userId;
-        console.log('UserId : ', userId);
-
-
         const user = await userModel.findById(userId);
-        console.log("User from Db : ", user)
-
         if (!user) {
             return res.json({ success: false, message: 'User Not found!!' })
         }
-
         if (user.isAccountVerified) {
             return res.json({ success: false, message: 'Account already verified!!' });
         }
-
         const otp = String(Math.floor(100000 + Math.random() * 900000));
-
         user.verifyOtp = otp;
         user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
 
@@ -138,7 +130,8 @@ export const sendverifyOtp = async (req, res) => {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: 'Account verification OTP',
-            text: `Your OTP is ${otp}. Verify your account using this OTP.`
+            // text: `Your OTP is ${otp}. Verify your account using this OTP.`,
+            html: EMAIL_VERIFY_TEMPLAET.replace("{{otp}}", otp)
         }
 
         await transporter.sendMail(mailOption);
@@ -217,7 +210,8 @@ export const sendResetOtp = async (req, res) => {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: 'Password Reset OTP',
-            text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`
+            // text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`
+            html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp)
         }
 
         await transporter.sendMail(mailOption);
