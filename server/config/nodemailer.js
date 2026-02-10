@@ -1,26 +1,36 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.SENDER_EMAIL,
-        pass: process.env.APP_PASS,
-    },
-    // Add pool and rate limiting for production
-    pool: true,
-    maxConnections: 5,
-    maxMessages: 100,
-    rateDelta: 1000,
-    rateLimit: 5,
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Verify connection on startup
-transporter.verify((err) => {
-    if (err) {
-        console.error('SMTP Connection Error:', err.message);
-    } else {
-        console.log('✓ Gmail SMTP ready to send emails');
+// Helper function to send email using Resend
+const sendEmail = async ({ to, subject, text, html }) => {
+    try {
+        const { data, error } = await resend.emails.send({
+            from: `MERN Auth <onboarding@resend.dev>`, // Use Resend's test domain or your verified domain
+            to: [to],
+            subject,
+            text: text || '',
+            html: html || text,
+        });
+
+        if (error) {
+            console.error('Resend Error:', error);
+            throw error;
+        }
+
+        console.log('✓ Email sent successfully to:', to);
+        return { success: true, data };
+    } catch (error) {
+        console.error('Email Send Error:', error.message);
+        throw error;
     }
-});
+};
 
-export default transporter;
+// Verify API key is set
+if (!process.env.RESEND_API_KEY) {
+    console.error('⚠ RESEND_API_KEY not set - emails will fail');
+} else {
+    console.log('✓ Resend email service ready');
+}
+
+export default sendEmail;

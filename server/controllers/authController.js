@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModels.js';
-import transporter from '../config/nodemailer.js';
+import sendEmail from '../config/nodemailer.js';
 import { PASSWORD_RESET_TEMPLATE, EMAIL_VERIFY_TEMPLAET } from '../config/emailTemplets.js';
 
 
@@ -41,14 +41,11 @@ export const register = async (req, res) => {
         });
 
         // sending welcome email 
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
+        await sendEmail({
             to: email,
             subject: 'Welcome to MERN_AUTH',
             text: `Welcome to MERN_AUTH. Your Profile has been created with email id : ${email}`
-        }
-
-        await transporter.sendMail(mailOptions);
+        });
 
         return res.json({ success: true });
 
@@ -126,15 +123,11 @@ export const sendverifyOtp = async (req, res) => {
 
         await user.save();
 
-        const mailOption = {
-            from: process.env.SENDER_EMAIL,
+        await sendEmail({
             to: user.email,
             subject: 'Account verification OTP',
-            // text: `Your OTP is ${otp}. Verify your account using this OTP.`,
             html: EMAIL_VERIFY_TEMPLAET.replace("{{otp}}", otp)
-        }
-
-        await transporter.sendMail(mailOption);
+        });
 
         res.json({ success: true, message: 'Verification OTP Sent on Email' })
 
@@ -206,15 +199,11 @@ export const sendResetOtp = async (req, res) => {
 
         await user.save();
 
-        const mailOption = {
-            from: process.env.SENDER_EMAIL,
+        await sendEmail({
             to: user.email,
             subject: 'Password Reset OTP',
-            // text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`
             html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp)
-        }
-
-        await transporter.sendMail(mailOption);
+        });
 
         res.json({ success: true, message: 'Password reset OTP Sent on Email' })
 
