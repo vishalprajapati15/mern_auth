@@ -11,14 +11,14 @@ const transporter = nodemailer.createTransport({
     tls:{
         rejectUnauthorized:false,
     },
-    connectionTimeout: 10000, // 10 seconds
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
+    connectionTimeout: 20000, // 10 seconds
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
 });
 
-transporter.verify((err, success)=>{
+transporter.verify((err)=>{
     if(err){
-        console.log('SMTP Error: ', err.message);
+        console.log('SMTP Verify Error: ', err.message);
     }
     else{
         console.log('SMTP READY');
