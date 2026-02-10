@@ -10,10 +10,23 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 connectDB();
-const allowedOrigins =['http://localhost:5173'];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
+.split(',')
+.map((origin)=>origin.trim())
+.filter(Boolean);
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin:allowedOrigins, credentials: true }));
+app.use(
+    cors({
+        origin:(origin, callback)=>{
+            if(!origin || allowedOrigins.includes(origin)){
+                return callback(null, true);
+            }
+            return callback(new Error('Not Allowed by Cors!!'));
+        },
+        credentials: true,
+    })
+);
 
 app.get('/', (req, res) => res.send('API is running...'));
 app.use('/api/auth', authRouter);
